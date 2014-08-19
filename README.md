@@ -18,7 +18,7 @@ https://dgtlmoon.com
 
 You can also run this from commandline without Drupal
 
-pdftotext mystatements.pdf - |python ./cleaner.py
+pdftotext -layout mystatements.pdf - |python ./cleaner.py
 
 Note: You will need the `pdftotext` command-line util, 
 apt-get install poppler-utils
