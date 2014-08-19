@@ -16,6 +16,13 @@ processing the output from pdftotext
 The other code is the Drupal module I use on my private website and blog
 https://dgtlmoon.com
 
+You can also run this from commandline without Drupal
+
+pdftotext mystatements.pdf - |python ./cleaner.py
+
+Note: You will need the `pdftotext` command-line util, 
+apt-get install poppler-utils
+
 Note: No guarantee is given with this software AND it only works with the 
       PRIVATE statements not BUSINESS statements
       
