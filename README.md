@@ -1,4 +1,4 @@
-westpac PDF
+Westpac PDF
 ===========
 
 Simple Drupal module that uses a Python script to convert Westpac PDF's to CSV
