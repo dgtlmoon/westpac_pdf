@@ -1,0 +1,89 @@
+<?php
+
+function westpac_pdf_block_info() {
+
+  $blocks['westpac_pdf'] = array(
+    'info' => t('Westpac PDF submission form'),
+  );
+
+  return $blocks;
+}
+
+
+function westpac_pdf_block_view($delta = '') {
+  $block = array();
+
+  switch ($delta) {
+    case 'westpac_pdf':
+      $block['subject'] = t('Submit Westpac eStatement PDF here');
+      $block['content'] = drupal_get_form('westpac_pdf_convert_form');
+      break;
+  }
+  return $block;
+}
+
+
+function westpac_pdf_convert_form($form, &$form_state) {
+  $form = array();
+
+
+  $form['convert'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Convert Westpac eStatement to CSV or QIF'),
+    '#weight' => 5,
+    '#collapsible' => FALSE,
+    '#collapsed' => FALSE,
+  );
+
+  $form['convert']['upload'] = array(
+    '#title' => t('Select Westpac eStatement PDF file'),
+    '#type' => 'file',
+    '#description' => t('Convert your Westpac eStatement PDFs to something usable (CSV), upload your eStatement here - note - we never store any data and this connection is secured with SSL Note: This is for PERSONAL banking statements'),
+    '#parents' => array('convert'),
+    '#element_validate' => array('_westpac_pdf_convert_form_upload_validate'),
+  );
+
+  $form['convert']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Convert'),
+    '#weight' => 100,
+  );
+
+  return $form;
+
+}
+
+function _westpac_pdf_convert_form_upload_validate($element, &$form_state) {
+  if (empty($_FILES['files']['name']['convert']) || !preg_match('/pdf$/i', $_FILES['files']['name']['convert']) ) {
+    form_error($element, t('You must select a file to upload'));
+    return;
+  }
+
+  $_FILES['files']['name']['convert'] = md5(microtime(true)).'.pdf';
+
+  $file = file_save_upload('convert');
+
+}
+
+function westpac_pdf_convert_form_submit($form, &$form_state) {
+  $tmp_name = md5(microtime(true)).'.txt';
+  $tmp_done_name = md5(microtime(true)).'.done-txt';
+  $cleaner = getcwd().'/'.drupal_get_path('module', 'westpac_pdf').'/cleaner.py';
+  watchdog('westpac', 'got file output'.filesize('/tmp/'.$_FILES['files']['name']['convert']));
+
+  exec("pdftotext -layout /tmp/{$_FILES['files']['name']['convert']} /tmp/{$tmp_name}");
+  watchdog('westpac', 'got file output after PDFtotext '.filesize('/tmp/'.$tmp_name));
+
+  exec("cat /tmp/{$tmp_name} |tr -d , |grep -Ei '^[0-9]{2}\s[a-z]{3}\s'|{$cleaner} > /tmp/{$tmp_done_name}");
+  watchdog('westpac', 'got file output after final clean  '.filesize('/tmp/'.$tmp_done_name));
+
+
+  drupal_add_http_header('Content-Type', 'text/csv; utf-8');
+  drupal_add_http_header("Content-Disposition", "attachment; filename=".time().".csv");
+  print file_get_contents('/tmp/'.$tmp_done_name);
+  unlink('/tmp/'.$tmp_done_name);
+  unlink('/tmp/'.$tmp_name);
+  unlink('/tmp/'.$_FILES['files']['name']['convert']);
+  drupal_exit();
+}
+

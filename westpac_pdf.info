@@ -1,0 +1,5 @@
+name = Westpac PDF parser
+description = Gives you CSV of your eStatement
+core = 7.x
+package = dgtlmoon
+
