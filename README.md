@@ -26,6 +26,8 @@ pdftotext -layout mystatements.pdf - |python ./cleaner.py
 Note: You will need the `pdftotext` command-line util, 
 `apt-get install poppler-utils`
 
+Most likely you could remove the python step and just execute the `pdftotext` from PHP and parse it inside of PHP.
+
 Note: No guarantee is given with this software AND it only works with the 
       PRIVATE statements not BUSINESS statements
       
