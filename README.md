@@ -19,6 +19,10 @@ processing the output from `pdftotext`
 The other code is the Drupal module I use on my private website and blog
 https://dgtlmoon.com
 
+_Note:_ You will need to install the `pdftotext` command-line util, `apt-get install poppler-utils`
+
+`pdftotext` does most of the hard work.
+
 ### Running the script by hand not as a Drupal module
 
 You can also run this from commandline without Drupal
@@ -28,8 +32,6 @@ pdftotext -layout mystatements.pdf - |python ./cleaner.py
 ```
 
 
-Note: You will need the `pdftotext` command-line util, 
-`apt-get install poppler-utils`
 
 
 ### To the Future...
