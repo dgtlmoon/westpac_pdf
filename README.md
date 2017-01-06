@@ -19,12 +19,20 @@ processing the output from `pdftotext`
 The other code is the Drupal module I use on my private website and blog
 https://dgtlmoon.com
 
+### Running the script by hand not as a Drupal module
+
 You can also run this from commandline without Drupal
 
+```
 pdftotext -layout mystatements.pdf - |python ./cleaner.py
+```
+
 
 Note: You will need the `pdftotext` command-line util, 
 `apt-get install poppler-utils`
+
+
+### To the Future...
 
 Most likely you could remove the python step and just execute the `pdftotext` from PHP and parse it inside of PHP.
 
